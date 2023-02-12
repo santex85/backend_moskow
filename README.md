@@ -11,7 +11,7 @@ Backend Moscow это веб-приложение, которое позволя
 
 2. Установите необходимые зависимости, используя `pip`:
 
-  pip install -r requirements.txt
+  pip install -r req.txt
   
 
 3. Запустите сервер, используя команду:
