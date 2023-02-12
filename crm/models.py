@@ -34,6 +34,7 @@ class Group(models.Model):
     group_organizer = models.CharField("Имя инструктора", max_length=256)
     date_checkin = models.DateField("Дата заселения")
     date_checkout = models.DateField("Дата выселения")
+    hotel = models.ForeignKey("Hotel", on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
