@@ -30,6 +30,8 @@ class Employee(User):
 class Group(models.Model):
     name = models.CharField("Название группы", max_length=256)
     count_guests = models.IntegerField("Количество гостей", default=1)
+    tag = models.CharField("Тег группы", max_length=25)
+    group_organizer = models.CharField("Имя инструктора", max_length=256)
     date_checkin = models.DateField("Дата заселения")
     date_checkout = models.DateField("Дата выселения")
 
