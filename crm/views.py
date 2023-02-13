@@ -1,7 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views import View
 
 from crm.forms import BookingGroupForm
+from crm.models import Group
 
 
 class IndexView(View):
@@ -38,13 +39,13 @@ class EarlyBookingGroupView(View):
     def post(request):
         form = BookingGroupForm(request.POST)
         if form.is_valid():
-            form.save()
+            group = form.save()
+            return redirect('group', pk=group.pk)
         else:
-            form = BookingGroupForm()
-        context = {
-            "form": form,
-        }
-        return render(request, 'crm/early_booking.html', context)
+            context = {
+                "form": form,
+            }
+            return render(request, 'crm/early_booking.html', context)
 
 
 class BookingGroupView(View):
@@ -94,5 +95,19 @@ class GuestsView(View):
 
 
 class GroupsView(View):
-    def get(self, request):
-        return render(request, 'crm/groups.html')
+    @staticmethod
+    def get(request):
+        groups = Group.objects.all()
+        context = {
+            'groups': groups,
+        }
+        return render(request, 'crm/groups.html', context)
+
+
+class GroupView(View):
+    def get(self, request, pk):
+        group = Group.objects.get(pk=pk)
+        context = {
+            'group': group,
+        }
+        return render(request, 'crm/group.html', context)
