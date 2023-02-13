@@ -28,13 +28,17 @@ class Employee(User):
 
 
 class Group(models.Model):
+    CHOICE_STATUS = [("Предварительная регистрация", "предварительная регистрация"), ("Регистрация", "регистрация"),
+                     ("В отеле", "в отеле"), ("Завершен", "завершен")]
     name = models.CharField("Название группы", max_length=256)
     count_guests = models.IntegerField("Количество гостей", default=1)
-    tag = models.CharField("Тег группы", max_length=25)
+    tag = models.CharField("Тег группы", max_length=25, unique=True)
     group_organizer = models.CharField("Имя инструктора", max_length=256)
     date_checkin = models.DateField("Дата заселения")
     date_checkout = models.DateField("Дата выселения")
     hotel = models.ForeignKey("Hotel", verbose_name="Отель", on_delete=models.CASCADE)
+    status = models.CharField("Статус группы", choices=CHOICE_STATUS, max_length=30,
+                              default="Предварительная регистрация")
 
     def __str__(self):
         return self.name
