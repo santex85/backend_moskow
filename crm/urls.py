@@ -18,4 +18,5 @@ urlpatterns = [
     path('cashier-outcome/', views.CashierOutcomeView.as_view(), name="cashier-outcome"),
     path('guests/', views.GuestsView.as_view(), name="guests"),
     path('groups/', views.GroupsView.as_view(), name="groups"),
+    path('group/<pk>', views.GroupView.as_view(), name="group"),
 ]

@@ -1,0 +1,20 @@
+{#todo разработать страницу группы#}
+{% include "base.html" %}
+{% block context %}
+    <div class="container">
+        <div class="row">
+           <div class="col-5">
+               <ul>
+                   <li>{{ group.name }}</li>
+                   <li>{{ group.tag }}</li>
+                   <li>{{ group.count_guests }}</li>
+                   <li>{{ group.hotel }}</li>
+                   <li>{{ group.date_checkin }}</li>
+                   <li>{{ group.date_checkout }}</li>
+               </ul>
+           </div>
+        </div>
+        <div class="row">
+        </div>
+    </div>
+{% endblock %}
