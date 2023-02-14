@@ -28,8 +28,8 @@ class Employee(User):
 
 
 class Group(models.Model):
-    CHOICE_STATUS = [("Предварительная регистрация", "предварительная регистрация"), ("Регистрация", "регистрация"),
-                     ("В отеле", "в отеле"), ("Завершен", "завершен")]
+    CHOICE_STATUS = [("preregister", "Предварительная регистрация"), ("register", "Регистрация"),
+                     ("inhotel", "В отеле"), ("finish", "Завершен")]
     name = models.CharField("Название группы", max_length=256)
     count_guests = models.IntegerField("Количество гостей", default=1)
     tag = models.CharField("Тег группы", max_length=25, unique=True)
@@ -76,12 +76,15 @@ class Hotel(models.Model):
 
 
 class Room(models.Model):
+    CHOICE = [("full", "Полный"), ("partially", "Частично"), ("empty", "Пустой"), ("over", "Переполненный")]
     number = models.IntegerField("Номер", default=100)
     name = models.CharField("Название номера", max_length=256, null=True, blank=True)
     hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE)
     capacity = models.IntegerField("Количество мест", default=2)
     over_booking = models.IntegerField("Дополнительные места в номер", default=1)
     price = models.IntegerField("Цена", default=0)
+    fullness = models.CharField("Статус", choices=CHOICE, max_length=30, default="empty")
+    number_guests = models.IntegerField("Количество гостей", default=0)
 
     def __str__(self):
         return f"{self.name}"
@@ -97,7 +100,7 @@ class Goods(models.Model):
     price = models.IntegerField("Стоимость")
 
     def __str__(self):
-        return self.name
+        return f"{self.name}"
 
     class Meta:
         verbose_name = "Товары"
@@ -124,7 +127,7 @@ class BookingServices(models.Model):
     guest = models.ForeignKey(Guest, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
-        return self.name
+        return f"{self.name}"
 
     class Meta:
         verbose_name = "Сервис"

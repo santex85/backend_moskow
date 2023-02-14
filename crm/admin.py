@@ -23,7 +23,7 @@ admin.site.register(Position, PositionAdmin)
 
 
 class RoomAdmin(admin.ModelAdmin):
-    list_display = ('number', 'name', 'hotel', 'capacity', 'over_booking', 'price')
+    list_display = ('number', 'name', 'hotel', 'capacity', 'over_booking', 'price', 'fullness')
 
 
 class HotelAdmin(admin.ModelAdmin):
