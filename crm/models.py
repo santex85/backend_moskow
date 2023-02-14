@@ -84,7 +84,7 @@ class Room(models.Model):
     price = models.IntegerField("Цена", default=0)
 
     def __str__(self):
-        return self.name
+        return f"{self.name}"
 
     class Meta:
         verbose_name = "Номер"
