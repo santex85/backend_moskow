@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Employee, Position
+from .models import Employee, Position, Room, Hotel
 from django.contrib.auth.admin import UserAdmin
 
 
@@ -20,3 +20,15 @@ class PositionAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Position, PositionAdmin)
+
+
+class RoomAdmin(admin.ModelAdmin):
+    list_display = ('number', 'name', 'hotel', 'capacity', 'over_booking', 'price')
+
+
+class HotelAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+
+
+admin.site.register(Room, RoomAdmin)
+admin.site.register(Hotel, HotelAdmin)
