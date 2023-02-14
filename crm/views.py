@@ -39,8 +39,8 @@ class EarlyBookingGroupView(View):
     def post(request):
         form = BookingGroupForm(request.POST)
         if form.is_valid():
-            group = form.save()
-            return redirect('group', pk=group.pk)
+            form.save()
+            return redirect('groups')
         else:
             context = {
                 "form": form,
@@ -97,7 +97,7 @@ class GuestsView(View):
 class GroupsView(View):
     @staticmethod
     def get(request):
-        groups = Group.objects.all()
+        groups = Group.objects.all().order_by('date_checkin')
         context = {
             'groups': groups,
         }

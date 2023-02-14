@@ -1,5 +1,7 @@
 from django.contrib.auth.models import User
+from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 
 class Position(models.Model):
@@ -15,12 +17,10 @@ class Position(models.Model):
 
 
 class Employee(User):
-    name = models.CharField("Имя", max_length=256)
-    surname = models.CharField("Фамилия", max_length=256)
-    position = models.ForeignKey(Position, on_delete=models.CASCADE)
+    position = models.ForeignKey(Position, on_delete=models.CASCADE, default=1)
 
     def __str__(self):
-        return f"{self.name}, {self.surname}"
+        return f"{self.position}"
 
     class Meta:
         verbose_name = "Сотрудник"
