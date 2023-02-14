@@ -12,14 +12,8 @@ class EmployeesAdmin(UserAdmin):
         (None, {"fields": ('is_superuser', 'is_staff', 'is_active', 'groups')}))
 
 
-admin.site.register(Employee, EmployeesAdmin)
-
-
 class PositionAdmin(admin.ModelAdmin):
     list_display = ('name', 'description')
-
-
-admin.site.register(Position, PositionAdmin)
 
 
 class RoomAdmin(admin.ModelAdmin):
@@ -30,5 +24,7 @@ class HotelAdmin(admin.ModelAdmin):
     list_display = ('name',)
 
 
+admin.site.register(Employee, EmployeesAdmin)
+admin.site.register(Position, PositionAdmin)
 admin.site.register(Room, RoomAdmin)
 admin.site.register(Hotel, HotelAdmin)
