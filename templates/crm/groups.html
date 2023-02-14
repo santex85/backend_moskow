@@ -7,14 +7,37 @@
         </div>
         <div class="row">
             <div class="col-12">
-                {% for group in groups %}
-                    <p>{{ group.name }}</p>
-                    <p>{{ group.status }}</p>
-                    <p>{{ group.tag }}</p>
-                    <p>{{ group.date_checkin }}</p>
-                    <p>{{ group.date_checkout }}</p>
-                    <hr>
-                {% endfor %}
+
+
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th scope="col">Имя группы</th>
+                        <th scope="col">Тег</th>
+                        <th scope="col">Организатор</th>
+                        <th scope="col">Дата заезда</th>
+                        <th scope="col">Дата выезда</th>
+                        <th scope="col">Статус</th>
+
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for group in groups %}
+                        <tr>
+
+                            <th><a href="{% url 'group' pk=group.pk %}">{{ group.name }}</a></th>
+                            <td>{{ group.tag }}</td>
+                            <td>{{ group.group_organizer }}</td>
+                            <td>{{ group.date_checkin }}</td>
+                            <td>{{ group.date_checkout }}</td>
+                            <td>{{ group.status }}</td>
+
+
+                        </tr>
+                    {% endfor %}
+
+                    </tbody>
+                </table>
 
             </div>
         </div>
