@@ -3,13 +3,13 @@
 {% block content %}
     <div class="container">
         <div class="row">
-            <div class="col-12">
+            <div class="col-sm-12">
                 <table class="table">
                     <thead>
                     <tr>
                         <th scope="col">Объект</th>
                         <th scope="col">Вместительность</th>
-                        <th scope="col">Количество людей</th>
+                        <th scope="col">Количество людей(в отеле)</th>
                         <th scope="col">Количество номеров</th>
                         <th scope="col">Загруженость</th>
                     </tr>
@@ -20,10 +20,11 @@
                                     {% if object.fullness_hotel > 50 and object.fullness_hotel < 70 %}table-warning{% endif %}
                                     {% if object.fullness_hotel > 70 %}table-danger{% endif %}">
                             <th><a href="{% url "object" pk=object.pk %}">{{ object.name }}</a></th>
+
+{#                            todo  free and extra places #}
+                            <td>{{ object.capacity_in_hotel }}({{object.potential_places_hotel}}) чел</td>
+                            <td>{{ object.number_guest_in_hotel }} чел</td>
                             <td>{{ object.rooms_in_hotel }}</td>
-                            {#                            todo  free and extra places #}
-                            <td>{{ object.capacity_in_hotel }}</td>
-                            <td>{{ object.number_guest_in_hotel }}</td>
                             <td>{{ object.fullness_hotel }}%</td>
                         </tr>
                     {% endfor %}
