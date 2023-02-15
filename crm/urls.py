@@ -19,4 +19,6 @@ urlpatterns = [
     path('guests/', views.GuestsView.as_view(), name="guests"),
     path('groups/', views.GroupsView.as_view(), name="groups"),
     path('group/<pk>', views.GroupView.as_view(), name="group"),
+    path('objects/', views.ObjectsView.as_view(), name="objects"),
+    path('object/<pk>', views.ObjectView.as_view(), name="object"),
 ]
