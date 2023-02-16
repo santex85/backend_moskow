@@ -95,9 +95,11 @@ class Room(models.Model):
 
 
 class Goods(models.Model):
+    CHOICE = [("volume", "л."), ("weight", "кг."), ('quantity', 'шт.')]
     name = models.CharField("Товар", max_length=250)
     count = models.IntegerField("Объем/количество")
     price = models.IntegerField("Стоимость")
+    unit = models.CharField("Единица измерения", choices=CHOICE, max_length=256)
 
     def __str__(self):
         return f"{self.name}"
