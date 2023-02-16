@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
 
-from .models import Employee, Position, Room, Hotel, Goods, Groceries, Household
+from .models import Employee, Position, Room, Hotel, Groceries, Household
 from django.contrib.auth.admin import UserAdmin
 
 
@@ -42,6 +42,20 @@ class HotelAdmin(admin.ModelAdmin):
     display_rooms.short_description = 'Номера'
 
 
+class GroceriesAdmin(admin.ModelAdmin):
+    list_display = ('name', 'count', 'price', 'unit')
+    list_filter = ('unit',)
+    search_fields = ('name', 'count', 'price')
+
+
+class HouseholdAdmin(admin.ModelAdmin):
+    list_display = ('name', 'count', 'price', 'unit')
+    list_filter = ('unit',)
+    search_fields = ('name', 'count', 'price')
+
+
+admin.site.register(Household, HouseholdAdmin)
+admin.site.register(Groceries, GroceriesAdmin)
 admin.site.register(Employee, EmployeesAdmin)
 admin.site.register(Position, PositionAdmin)
 admin.site.register(Room, RoomAdmin)
