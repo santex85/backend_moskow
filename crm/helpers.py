@@ -3,11 +3,14 @@ import random
 from django.db.models import Sum
 from faker import Faker
 
-from crm.models import Hotel, Room
+from crm.models import Hotel, Room, Groceries, Goods
 
 
-def change_fullness(room):
-    """change status room depending on occupancy"""
+def change_fullness(room: Room):
+    """
+    Функция change_fullness() принимает в качестве аргумента объект класса Room.
+    Она определяет степень загруженности комнаты (полная, частично заполненная, пустая) и сохраняет эту информацию в базе данных.
+    """
     capacity = room.capacity
     number_guests = room.number_guests
     if number_guests >= capacity:
@@ -19,8 +22,12 @@ def change_fullness(room):
     room.save()
 
 
-def get_title_object_info(obj):
-    """get information about object"""
+def get_title_object_info(obj: Hotel) -> Hotel:
+    """
+    Данная функция принимает в качестве аргумента объект класса Hotel и возвращает модифицированный объект
+    с дополнительной информацией о количестве комнат, количестве гостей, вместимости,
+    количестве свободных мест, потенциальном количестве мест, а также степени загруженности отеля.
+    """
     rooms = obj.room_set.all()
     rooms_in_hotel = len(rooms)
     number_guest_in_hotel = rooms.aggregate(Sum("number_guests"))["number_guests__sum"]
@@ -35,10 +42,10 @@ def get_title_object_info(obj):
     setattr(obj, "free_place_hotel", free_place_hotel)
     setattr(obj, "potential_places_hotel", potential_places_hotel)
     setattr(obj, "fullness_hotel", round((number_guest_in_hotel * 100) / capacity_in_hotel))
+    return obj
 
 
 def fake_hotels_rooms():
-
     fake = Faker()
 
     # Создаем 5 отелей
@@ -56,3 +63,18 @@ def fake_hotels_rooms():
             over_booking = random.randint(0, 2)
             Room.objects.create(name=name, hotel=hotel, capacity=capacity, price=price, fullness=fullness,
                                 number_guests=number_guests, over_booking=over_booking)
+
+
+def get_equivalent_products(product: Groceries, goods: Goods):
+    """
+        Функция для вычисления суммы товара.
+
+        :param product: Объект товара из модели Goods(Groceries)
+        :param goods: Объект модели Goods
+        :return: Объект товара с дополнительным полем equivalent (эквивалент)
+        """
+
+    equivalent = product.how_many_unit * product.price
+    product.unit = goods.CHOICE[product.unit]
+    setattr(product, "equivalent", equivalent)
+    return product
