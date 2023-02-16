@@ -95,11 +95,12 @@ class Room(models.Model):
 
 
 class Goods(models.Model):
-    CHOICE = [("volume", "л."), ("weight", "кг."), ('quantity', 'шт.')]
-    name = models.CharField("Товар", max_length=250)
-    count = models.IntegerField("Объем/количество")
-    price = models.IntegerField("Стоимость")
-    unit = models.CharField("Единица измерения", choices=CHOICE, max_length=256)
+    CHOICE = {"volume": "л.", "weight": "кг.", 'quantity': 'шт.'}
+    name = models.CharField("Название товара", unique=True, max_length=250)
+    count = models.FloatField("Объем/количество в единице")
+    unit = models.CharField("Единица измерения", choices=CHOICE.items(), max_length=256, default="weight")
+    price = models.FloatField("Стоимость за единицу")
+    how_many_unit = models.IntegerField("Количество единиц", default=1)
 
     def __str__(self):
         return f"{self.name}"
