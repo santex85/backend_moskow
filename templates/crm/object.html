@@ -3,7 +3,10 @@
     <div class="container">
         <div class="row">
             <div class="col">
-                <h2>{{ hotel.name }}</h2>
+                <h2>{{ hotel }}</h2>
+                {% for room in rooms %}
+                    <h3>{{ room.name }}</h3>
+                {% endfor %}
             </div>
         </div>
     </div>

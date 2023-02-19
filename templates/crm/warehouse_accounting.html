@@ -1,8 +1,102 @@
+{% load django_bootstrap5 %}
 {% include "base.html" %}
+{% load l10n %}
+
 {% block context %}
     <div class="container">
         <div class="row">
-            <h3 class="mt-3">Учет склада</h3>
+            <h3 class="mt-3">Учет хозчасти</h3>
+            <p>Сегодня {% now "d.m.Y" %}</p>
+            <div class="col-md-4">
+                <div class="accordion" id="accordion-new-unit">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingTwo">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                Новая позиция
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse {% if form.errors %}show{% endif %}"
+                             aria-labelledby="headingTwo"
+                             data-bs-parent="#accordionExample">
+                            <form method="post" class="form mb-3 p-2">
+                                {% csrf_token %}
+                                {% bootstrap_form form %}
+                                {% bootstrap_button button_type="submit" content="Сохранить" %}
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="table-responsive">
+                        <table class="table table-sm mt-3">
+                            <thead>
+                            <tr>
+                                <th scope="col">Название товара</th>
+                                <th scope="col">Количество в наличии</th>
+                                <th scope="col">Денежный эквивалент</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for product in products %}
+                                <tr>
+                                    <th>{{ product.name }}</th>
+                                    <td>{{ product.how_many_unit }} {{ product.unit }}</td>
+                                    <td>{{ product.equivalent }}</td>
+                                    <td>
+                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                                data-bs-target="#modal-add-{{ product.id }}">Приход / расход
+                                        </button>
+
+
+                                        <div class="modal fade" id="modal-add-{{ product.id }}" tabindex="-1"
+                                             aria-labelledby="modal-{{ product.id }}Label" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h1 class="modal-title fs-5" id="modal-{{ product.id }}Label">
+                                                            Добавить {{ product.name }}</h1>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                                aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form method="post" class="form mb-3"
+                                                              action="{% url 'warehouse-update' %}">
+                                                            {% csrf_token %}
+                                                            <input type="hidden" name="id" value="{{ product.id }}" >
+                                                            <input type="hidden" name="count" value="{{ product.count }}" >
+                                                            <input type="hidden" name="name" value="{{ product.name }}" >
+                                                            <input type="hidden" name="unit" value="{{ product.unit }}" >
+                                                            <div class="mb-3">
+                                                                <label for="how-many" class="form-label">Количество</label>
+                                                                <input type="number" name="how_many_unit" class="form-control" id="how-many" step="any" value="{{ product.how_many_unit|unlocalize }}">
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label for="price" class="form-label">Стоимость</label>
+                                                                <input type="number" name="price" class="form-control" step="any" id="price" value="{{ product.price|unlocalize }}">
+                                                            </div>
+
+                                                            <button type="submit" class="btn btn-primary">Сохранить</button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </td>
+                                </tbody>
+                            {% endfor %}
+{#                        todo paginator#}
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+
+
+
 {% endblock %}
