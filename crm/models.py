@@ -1,7 +1,16 @@
 from django.contrib.auth.models import User
-from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
-from django.utils.translation import gettext_lazy as _
+
+
+class Hotel(models.Model):
+    name = models.CharField("Имя отеля", max_length=256)
+
+    def __str__(self):
+        return f"{self.name}"
+
+    class Meta:
+        verbose_name = "Отель"
+        verbose_name_plural = "Отели"
 
 
 class Position(models.Model):
@@ -9,7 +18,7 @@ class Position(models.Model):
     description = models.TextField("Описание")
 
     def __str__(self):
-        return self.name
+        return f"{self.name}"
 
     class Meta:
         verbose_name = "Должность"
@@ -17,10 +26,11 @@ class Position(models.Model):
 
 
 class Employee(User):
-    position = models.ForeignKey(Position, on_delete=models.CASCADE, default=1)
+    position = models.ForeignKey(Position, on_delete=models.CASCADE, null=True, default=None)
+    hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE, null=True, default=None)
 
     def __str__(self):
-        return f"{self.position}"
+        return f"{self.username}"
 
     class Meta:
         verbose_name = "Сотрудник"
@@ -41,7 +51,7 @@ class Group(models.Model):
                               default="Предварительная регистрация")
 
     def __str__(self):
-        return self.name
+        return f"{self.name}"
 
     class Meta:
         verbose_name = "Группа"
@@ -52,7 +62,7 @@ class Guest(models.Model):
     name = models.CharField("Имя", max_length=256)
     surname = models.CharField("Фамилия", max_length=256)
     telephone = models.CharField("Телефон", max_length=256)
-    group = models.ForeignKey(Group, on_delete=models.CASCADE)
+    group = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True, default=None)
     date_checkin = models.DateField("Дата заселения", blank=True)
     date_checkout = models.DateField("Дата выселения", blank=True)
 
@@ -62,17 +72,6 @@ class Guest(models.Model):
     class Meta:
         verbose_name = "Гость"
         verbose_name_plural = "Гости"
-
-
-class Hotel(models.Model):
-    name = models.CharField("Имя отеля", max_length=256)
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        verbose_name = "Отель"
-        verbose_name_plural = "Отели"
 
 
 class Room(models.Model):
@@ -122,6 +121,13 @@ class Household(Goods):
         verbose_name_plural = "Хозтовары"
 
 
+class InventoryControl(models.Model):
+    goods = models.ForeignKey(Goods, on_delete=models.CASCADE)
+    data_update = models.DateTimeField("Дата обновления", auto_now=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    count = models.IntegerField("Количество", default=0)
+
+
 class BookingServices(models.Model):
     name = models.CharField("Название", max_length=256)
     start_time_booking = models.DateTimeField()
@@ -154,7 +160,7 @@ class Service(models.Model):
     description = models.TextField("Описание услуги", null=True, blank=True)
 
     def __str__(self):
-        return self.name
+        return f"{self.name}"
 
     class Meta:
         verbose_name = "Услуга"
