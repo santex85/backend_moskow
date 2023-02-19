@@ -1,14 +1,15 @@
 from django.shortcuts import render, redirect
 from django.views import View
 
-from crm.forms import BookingGroupForm
-from crm.helpers import change_fullness, get_title_object_info
-from crm.models import Group, Hotel, Room
+from crm.forms import BookingGroupForm, KitchenForm, KitchenUpdateForm, HouseholdForm, HouseholdUpdateForm
+from crm.helpers import change_fullness, get_title_object_info, get_equivalent_products, get_products
+from crm.models import Group, Hotel, Room, Goods, Groceries, Household
 
 
 class IndexView(View):
 
-    def get(self, request):
+    @staticmethod
+    def get(request):
         objects = Hotel.objects.all()
         for obj in objects:
             get_title_object_info(obj)
@@ -16,6 +17,20 @@ class IndexView(View):
             "objects": objects,
         }
         return render(request, "crm/objects.html", context)
+
+
+class ObjectView(View):
+    @staticmethod
+    def get(request, pk):
+        # todo get data for page with object
+        hotel = Hotel.objects.get(pk=pk)
+        rooms = Room.objects.filter(hotel=hotel)
+
+        context = {
+            "hotel": hotel,
+            "rooms": rooms,
+        }
+        return render(request, "crm/object.html", context)
 
 
 class ReportPeriodView(View):
@@ -67,13 +82,99 @@ class BookingGuestView(View):
 
 
 class WarehouseAccountingView(View):
-    def get(self, request):
-        return render(request, "crm/warehouse_accounting.html")
+    @staticmethod
+    def get(request):
+        form = HouseholdForm()
+        products = get_products(Household)
+        form_update = HouseholdUpdateForm()
+        context = {
+            "form": form,
+            "products": products,
+            "form_update": form_update,
+        }
+        return render(request, "crm/warehouse_accounting.html", context)
+
+    @staticmethod
+    def post(request):
+        form = HouseholdForm(request.POST)
+        form_update = HouseholdUpdateForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("warehouse-accounting")
+
+        else:
+            products = get_products(Household)
+            context = {
+                "form": form,
+                "products": products,
+                "form_update": form_update,
+            }
+            return render(request, "crm/warehouse_accounting.html", context)
+
+
+class WarehouseUpdateView(View):
+    @staticmethod
+    def post(request):
+        form = HouseholdUpdateForm(request.POST)
+        if form.is_valid():
+            product = Goods.objects.get(pk=request.POST.get("id"))
+            product.how_many_unit = form.cleaned_data.get("how_many_unit")
+            product.price = form.cleaned_data.get("price")
+            product.save()
+            return redirect("warehouse-accounting")
+        else:
+            context = {
+                "form": form,
+            }
+            return render(request, "crm/kitchen_accounting.html", context)
 
 
 class KitchenAccountingView(View):
-    def get(self, request):
-        return render(request, "crm/kitchen_accounting.html")
+    @staticmethod
+    def get(request):
+        form = KitchenForm()
+        products = get_products(Groceries)
+        form_update = KitchenUpdateForm()
+        context = {
+            "form": form,
+            "products": products,
+            "form_update": form_update,
+        }
+        return render(request, "crm/kitchen_accounting.html", context)
+
+    @staticmethod
+    def post(request):
+        form = KitchenForm(request.POST)
+        form_update = KitchenUpdateForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("kitchen-accounting")
+
+        else:
+            products = get_products(Groceries)
+            context = {
+                "form": form,
+                "products": products,
+                "form_update": form_update,
+            }
+            return render(request, "crm/kitchen_accounting.html", context)
+
+
+class KitchenUpdateView(View):
+    @staticmethod
+    def post(request):
+        form = KitchenUpdateForm(request.POST)
+        if form.is_valid():
+            product = Goods.objects.get(pk=request.POST.get("id"))
+            product.how_many_unit = form.cleaned_data.get("how_many_unit")
+            product.price = form.cleaned_data.get("price")
+            product.save()
+            return redirect("kitchen-accounting")
+        else:
+            context = {
+                "form": form,
+            }
+            return render(request, "crm/kitchen_accounting.html", context)
 
 
 class CalendarHallView(View):
@@ -127,27 +228,3 @@ class GroupView(View):
             "group": group,
         }
         return render(request, "crm/group.html", context)
-
-
-class ObjectsView(View):
-    @staticmethod
-    def get(request):
-        objects = Hotel.objects.all()
-        for obj in objects:
-            get_title_object_info(obj)
-        context = {
-            "objects": objects,
-        }
-        print(context)
-        return render(request, "crm/objects.html", context)
-
-
-class ObjectView(View):
-    @staticmethod
-    def get(request, pk):
-        # todo get data for page with object
-        hotel = Hotel.objects.get(pk=pk)
-        context = {
-            "hotel": hotel,
-        }
-        return render(request, "crm/object.html", context)

@@ -11,7 +11,9 @@ urlpatterns = [
     path('booking-group/', views.BookingGroupView.as_view(), name="booking-group"),
     path('booking-guest/', views.BookingGuestView.as_view(), name="booking-guest"),
     path('warehouse-accounting/', views.WarehouseAccountingView.as_view(), name="warehouse-accounting"),
+    path('warehouse-update/', views.WarehouseUpdateView.as_view(), name="warehouse-update"),
     path('kitchen-accounting/', views.KitchenAccountingView.as_view(), name="kitchen-accounting"),
+    path('kitchen-update/', views.KitchenUpdateView.as_view(), name="kitchen-update"),
     path('calendar-hall/', views.CalendarHallView.as_view(), name="calendar-hall"),
     path('calendar-sauna/', views.CalendarSaunaView.as_view(), name="calendar-sauna"),
     path('cashier-income/', views.CashierIncomeView.as_view(), name="cashier-income"),
@@ -19,6 +21,5 @@ urlpatterns = [
     path('guests/', views.GuestsView.as_view(), name="guests"),
     path('groups/', views.GroupsView.as_view(), name="groups"),
     path('group/<pk>', views.GroupView.as_view(), name="group"),
-    path('objects/', views.ObjectsView.as_view(), name="objects"),
     path('object/<pk>', views.ObjectView.as_view(), name="object"),
 ]
