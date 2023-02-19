@@ -78,3 +78,23 @@ def get_equivalent_products(product: Groceries, goods: Goods):
     product.unit = goods.CHOICE[product.unit]
     setattr(product, "equivalent", equivalent)
     return product
+
+
+def get_products(model):
+    """
+        Получает список объектов модели, переданной в качестве аргумента.
+
+        Аргументы:
+        - model: модель Django.
+
+        Возвращает:
+        - Список объектов модели.
+
+        Для каждого объекта в списке выполняется функция get_equivalent_products,
+        которая добавляет в объект поля, связанные с эквивалентными продуктами,
+        используя информацию из модели Goods.
+        """
+    products = model.objects.all()
+    for product in products:
+        get_equivalent_products(product, Goods)
+    return products
