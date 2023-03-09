@@ -1,3 +1,6 @@
+from datetime import datetime, timedelta
+
+from django.http import Http404
 from django.shortcuts import render, redirect
 from django.views import View
 
@@ -11,12 +14,19 @@ class IndexView(View):
     @staticmethod
     def get(request):
         objects = Hotel.objects.all()
+        # try:
+        #     start_date = datetime.strptime(str(request.GET.get("start_date")), "%Y-%m-%d")
+        #     end_date = datetime.strptime(str(request.GET.get("end_date")), "%Y-%m-%d")
+        # except ValueError:
+        #     raise Http404
+
         for obj in objects:
             get_title_object_info(obj)
+
         context = {
-            "objects": objects,
+            'objects': objects,
         }
-        return render(request, "crm/objects.html", context)
+        return render(request, 'crm/objects.html', context)
 
 
 class ObjectView(View):
@@ -28,15 +38,14 @@ class ObjectView(View):
         get_title_object_info(hotel)
         groups = Group.objects.all().filter(hotel=hotel)
         employees = Employee.objects.all().filter(hotel=hotel)
-        print(employees)
-        context = {
-            "hotel": hotel,
-            "rooms": rooms,
-            "groups": groups,
-            "employees": employees,
 
+        context = {
+            'hotel': hotel,
+            'rooms': rooms,
+            'groups': groups,
+            'employees': employees,
         }
-        return render(request, "crm/object.html", context)
+        return render(request, 'crm/object.html', context)
 
 
 class EarlyBookingGroupView(View):
@@ -44,21 +53,21 @@ class EarlyBookingGroupView(View):
     def get(request):
         form = BookingGroupForm()
         context = {
-            "form": form,
+            'form': form,
         }
-        return render(request, "crm/early_booking.html", context)
+        return render(request, 'crm/early_booking.html', context)
 
     @staticmethod
     def post(request):
         form = BookingGroupForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect("groups")
+            return redirect('groups')
         else:
             context = {
-                "form": form,
+                'form': form,
             }
-            return render(request, "crm/early_booking.html", context)
+            return render(request, 'crm/early_booking.html', context)
 
 
 class WarehouseAccountingView(View):
@@ -68,11 +77,11 @@ class WarehouseAccountingView(View):
         products = get_products(Household)
         form_update = HouseholdUpdateForm()
         context = {
-            "form": form,
-            "products": products,
-            "form_update": form_update,
+            'form': form,
+            'products': products,
+            'form_update': form_update,
         }
-        return render(request, "crm/warehouse_accounting.html", context)
+        return render(request, 'crm/warehouse_accounting.html', context)
 
     @staticmethod
     def post(request):
@@ -80,16 +89,16 @@ class WarehouseAccountingView(View):
         form_update = HouseholdUpdateForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect("warehouse-accounting")
+            return redirect('warehouse-accounting')
 
         else:
             products = get_products(Household)
             context = {
-                "form": form,
-                "products": products,
-                "form_update": form_update,
+                'form': form,
+                'products': products,
+                'form_update': form_update,
             }
-            return render(request, "crm/warehouse_accounting.html", context)
+            return render(request, 'crm/warehouse_accounting.html', context)
 
 
 class WarehouseUpdateView(View):
@@ -98,20 +107,20 @@ class WarehouseUpdateView(View):
         form = HouseholdUpdateForm(request.POST)
         if form.is_valid():
             log = InventoryControl()
-            product = Goods.objects.get(pk=request.POST.get("id"))
-            product.how_many_unit = form.cleaned_data.get("how_many_unit")
-            product.price = form.cleaned_data.get("price")
+            product = Goods.objects.get(pk=request.POST.get('id'))
+            product.how_many_unit = form.cleaned_data.get('how_many_unit')
+            product.price = form.cleaned_data.get('price')
             log.goods = product
             log.user = request.user
-            log.count = form.cleaned_data.get("how_many_unit")
+            log.count = form.cleaned_data.get('how_many_unit')
             product.save()
             log.save()
-            return redirect("warehouse-accounting")
+            return redirect('warehouse-accounting')
         else:
             context = {
-                "form": form,
+                'form': form,
             }
-            return render(request, "crm/kitchen_accounting.html", context)
+            return render(request, 'crm/kitchen_accounting.html', context)
 
 
 class KitchenAccountingView(View):
@@ -121,11 +130,11 @@ class KitchenAccountingView(View):
         products = get_products(Groceries)
         form_update = KitchenUpdateForm()
         context = {
-            "form": form,
-            "products": products,
-            "form_update": form_update,
+            'form': form,
+            'products': products,
+            'form_update': form_update,
         }
-        return render(request, "crm/kitchen_accounting.html", context)
+        return render(request, 'crm/kitchen_accounting.html', context)
 
     @staticmethod
     def post(request):
@@ -133,16 +142,16 @@ class KitchenAccountingView(View):
         form_update = KitchenUpdateForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect("kitchen-accounting")
+            return redirect('kitchen-accounting')
 
         else:
             products = get_products(Groceries)
             context = {
-                "form": form,
-                "products": products,
-                "form_update": form_update,
+                'form': form,
+                'products': products,
+                'form_update': form_update,
             }
-            return render(request, "crm/kitchen_accounting.html", context)
+            return render(request, 'crm/kitchen_accounting.html', context)
 
 
 class KitchenUpdateView(View):
@@ -150,92 +159,92 @@ class KitchenUpdateView(View):
     def post(request):
         form = KitchenUpdateForm(request.POST)
         if form.is_valid():
-            product = Goods.objects.get(pk=request.POST.get("id"))
-            product.how_many_unit = form.cleaned_data.get("how_many_unit")
-            product.price = form.cleaned_data.get("price")
+            product = Goods.objects.get(pk=request.POST.get('id'))
+            product.how_many_unit = form.cleaned_data.get('how_many_unit')
+            product.price = form.cleaned_data.get('price')
             product.save()
-            return redirect("kitchen-accounting")
+            return redirect('kitchen-accounting')
         else:
             context = {
-                "form": form,
+                'form': form,
             }
-            return render(request, "crm/kitchen_accounting.html", context)
+            return render(request, 'crm/kitchen_accounting.html', context)
 
 
 class ReportPeriodView(View):
     def get(self, request):
-        return render(request, "crm/report_period.html")
+        return render(request, 'crm/report_period.html')
 
 
 class ReportGroupView(View):
     def get(self, request):
-        return render(request, "crm/report_group.html")
+        return render(request, 'crm/report_group.html')
 
 
 class ReportInlineView(View):
     def get(self, request):
-        return render(request, "crm/report_inline.html")
+        return render(request, 'crm/report_inline.html')
 
 
 class BookingGroupView(View):
     @staticmethod
     def get(request):
-        return render(request, "crm/booking_group.html")
+        return render(request, 'crm/booking_group.html')
 
 
 class BookingGuestView(View):
     def get(self, request):
-        return render(request, "crm/booking_guest.html")
+        return render(request, 'crm/booking_guest.html')
 
 
 class CalendarHallView(View):
     def get(self, request):
-        return render(request, "crm/calendar_hall.html")
+        return render(request, 'crm/calendar_hall.html')
 
 
 class CalendarSaunaView(View):
     def get(self, request):
-        return render(request, "crm/calendar_sauna.html")
+        return render(request, 'crm/calendar_sauna.html')
 
 
 class CashierIncomeView(View):
     def get(self, request):
-        return render(request, "crm/cashier_income.html")
+        return render(request, 'crm/cashier_income.html')
 
 
 class CashierOutcomeView(View):
     def get(self, request):
-        return render(request, "crm/cashier_outcome.html")
+        return render(request, 'crm/cashier_outcome.html')
 
 
 class GuestsView(View):
     def get(self, request):
-        return render(request, "crm/guests.html")
+        return render(request, 'crm/guests.html')
 
 
 class GuestView(View):
     def get(self, request, pk):
         guest = Hotel.objects.get(pk=pk)
         context = {
-            "guest": guest,
+            'guest': guest,
         }
-        return render(request, "crm/guest.html", context)
+        return render(request, 'crm/guest.html', context)
 
 
 class GroupsView(View):
     @staticmethod
     def get(request):
-        groups = Group.objects.all().order_by("date_checkin")
+        groups = Group.objects.all().order_by('date_checkin')
         context = {
-            "groups": groups,
+            'groups': groups,
         }
-        return render(request, "crm/groups.html", context)
+        return render(request, 'crm/groups.html', context)
 
 
 class GroupView(View):
     def get(self, request, pk):
         group = Group.objects.get(pk=pk)
         context = {
-            "group": group,
+            'group': group,
         }
-        return render(request, "crm/group.html", context)
+        return render(request, 'crm/group.html', context)

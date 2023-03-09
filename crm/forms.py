@@ -1,5 +1,4 @@
 from django import forms
-
 from crm.models import Group, Groceries, Household
 
 

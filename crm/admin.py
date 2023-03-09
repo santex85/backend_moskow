@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
 
-from .models import Employee, Position, Room, Hotel, Groceries, Household
+from .models import Employee, Position, Room, Hotel, Groceries, Household, InventoryControl, Group
 from django.contrib.auth.admin import UserAdmin
 
 
@@ -11,7 +11,7 @@ class EmployeesAdmin(UserAdmin):
     list_display = ("username", "first_name", "last_name", "position",)
     fieldsets = (
         (None, {"fields": ("username", "password", "email")}),
-        (None, {"fields": ("first_name", "last_name", "position")},),
+        (None, {"fields": ("first_name", "last_name", "position", "hotel")},),
         (None, {"fields": ("is_superuser", "is_staff", "is_active", "groups")}))
 
 
@@ -54,6 +54,19 @@ class HouseholdAdmin(admin.ModelAdmin):
     search_fields = ('name', 'count', 'price')
 
 
+class InventoryControlAdmin(admin.ModelAdmin):
+    list_display = ('goods', 'date_update', 'user', 'count')
+    list_filter = ('user', 'date_update')
+    search_fields = ('goods', 'count', 'user')
+
+
+class GroupAdmin(admin.ModelAdmin):
+    list_display = (
+        'name', 'count_guests', 'tag', 'group_organizer', 'date_checkin', 'date_checkout', 'hotel')
+
+
+admin.site.register(Group, GroupAdmin)
+admin.site.register(InventoryControl, InventoryControlAdmin)
 admin.site.register(Household, HouseholdAdmin)
 admin.site.register(Groceries, GroceriesAdmin)
 admin.site.register(Employee, EmployeesAdmin)

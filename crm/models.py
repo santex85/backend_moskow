@@ -63,8 +63,6 @@ class Guest(models.Model):
     surname = models.CharField("Фамилия", max_length=256)
     telephone = models.CharField("Телефон", max_length=256)
     group = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True, default=None)
-    date_checkin = models.DateField("Дата заселения", blank=True)
-    date_checkout = models.DateField("Дата выселения", blank=True)
 
     def __str__(self):
         return f"{self.name}, {self.surname}"
@@ -91,6 +89,14 @@ class Room(models.Model):
     class Meta:
         verbose_name = "Номер"
         verbose_name_plural = "Номера"
+
+
+class Booking(models.Model):
+    room = models.ForeignKey(Room, on_delete=models.CASCADE)
+    guest = models.ForeignKey(Guest, on_delete=models.CASCADE)
+    date_checkin = models.DateField("Дата заселения")
+    date_checkout = models.DateField("Дата выселения")
+    hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE)
 
 
 class Goods(models.Model):
@@ -123,9 +129,15 @@ class Household(Goods):
 
 class InventoryControl(models.Model):
     goods = models.ForeignKey(Goods, on_delete=models.CASCADE)
-    data_update = models.DateTimeField("Дата обновления", auto_now=True)
+    date_update = models.DateTimeField("Дата обновления", auto_now=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     count = models.IntegerField("Количество", default=0)
+
+    def __str__(self):
+        return f"{self.goods}"
+
+    class Meta:
+        verbose_name = "Складской учет"
 
 
 class BookingServices(models.Model):
