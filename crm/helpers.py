@@ -1,5 +1,7 @@
 import random
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
+from typing import List, Tuple
+
 from django.db.models import Sum, Q
 from faker import Faker
 from crm.models import Hotel, Room, Groceries, Goods, Booking, Guest
@@ -21,7 +23,19 @@ def change_fullness(room: Room):
     room.save()
 
 
-def get_title_objects_info(date_checkin, date_checkout, hotel=None):
+def get_title_objects_info(date_checkin: date, date_checkout, hotel: Hotel = None) -> List[List[Booking]]:
+    """
+        Возвращает список списков объектов `Booking` для всех отелей или для указанного отеля `hotel`,
+        которые доступны для бронирования в указанный период.
+
+        Если указан конкретный отель, то возвращается список `Booking` для этого отеля.
+        Если `hotel` не указан, то возвращается список списков `Booking` для всех отелей.
+
+        :param date_checkin: Объект `date`, представляющий дату заезда.
+        :param date_checkout: Объект `date`, представляющий дату выезда.
+        :param hotel: Опциональный объект `Hotel`, представляющий искомый отель.
+        :return: Список списков объектов `Booking` для всех отелей или для указанного отеля `hotel`.
+        """
     rooms = Room.objects.all()
     hotels = Hotel.objects.all()
     objects = []
@@ -34,6 +48,16 @@ def get_title_objects_info(date_checkin, date_checkout, hotel=None):
 
 
 def get_booking(hotel, date_checkin, date_checkout, rooms):
+    """
+        Вычисляет информацию об заполненности и вместимости для заданного `hotel` в указанный период дат заезда и
+        выезда, учитывая доступность `rooms` в отеле в течение этого периода.
+
+        :param hotel: Объект `Hotel`, представляющий искомый отель.
+        :param date_checkin: Объект `date`, представляющий дату заезда.
+        :param date_checkout: Объект `date`, представляющий дату выезда.
+        :param rooms: Список объектов `Room`, представляющих искомые номера.
+        :return: Объект `Hotel` с вычисленной информацией о заполненности и вместимости.
+        """
     hotel_rooms = rooms.filter(hotel=hotel)
     bookings = Booking.objects.filter(Q(date_checkin__range=(date_checkin, date_checkout)) | Q(
         date_checkout__range=(date_checkin, date_checkout)), room__hotel_id=hotel.id)
@@ -74,12 +98,6 @@ def get_products(model):
     """
         Получает список объектов модели, переданной в качестве аргумента.
 
-        Аргументы:
-        - model: модель Django.
-
-        Возвращает:
-        - Список объектов модели.
-
         Для каждого объекта в списке выполняется функция get_equivalent_products,
         которая добавляет в объект поля, связанные с эквивалентными продуктами,
         используя информацию из модели Goods.
@@ -90,7 +108,14 @@ def get_products(model):
     return products
 
 
-def validate_date(request):
+def validate_date(request) -> Tuple[datetime, datetime]:
+    """
+       Проверяет и преобразует даты, полученные из GET-запроса HTTP в Django.
+       Если даты не были указаны в запросе, используется текущая дата.
+
+       :param request: Объект `request` HTTP-запроса Django.
+       :return: Кортеж из двух объектов `datetime`.
+       """
     if request.GET.get("start_date"):
         start_date = datetime.strptime(request.GET.get("start_date"), "%Y-%m-%d")
     else:
