@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
 
-from .models import Employee, Position, Room, Hotel, Groceries, Household, InventoryControl, Group
+from .models import Employee, Position, Room, Hotel, Groceries, Household, InventoryControl, Group, Booking, Guest
 from django.contrib.auth.admin import UserAdmin
 
 
@@ -65,6 +65,16 @@ class GroupAdmin(admin.ModelAdmin):
         'name', 'count_guests', 'tag', 'group_organizer', 'date_checkin', 'date_checkout', 'hotel')
 
 
+class BookingAdmin(admin.ModelAdmin):
+    list_display = ('guest', 'room', 'date_checkin', 'date_checkout')
+
+
+class GuestAdmin(admin.ModelAdmin):
+    list_display = ('first_name', 'last_name', 'telephone', 'group', 'room')
+
+
+admin.site.register(Guest, GuestAdmin)
+admin.site.register(Booking, BookingAdmin)
 admin.site.register(Group, GroupAdmin)
 admin.site.register(InventoryControl, InventoryControlAdmin)
 admin.site.register(Household, HouseholdAdmin)
