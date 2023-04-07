@@ -1,11 +1,8 @@
 import random
-import calendar
-from datetime import datetime
-
-from django.db.models import Sum
+from datetime import datetime, timedelta
+from django.db.models import Sum, Q
 from faker import Faker
-
-from crm.models import Hotel, Room, Groceries, Goods
+from crm.models import Hotel, Room, Groceries, Goods, Booking, Guest
 
 
 def change_fullness(room: Room):
@@ -24,47 +21,38 @@ def change_fullness(room: Room):
     room.save()
 
 
-def get_title_object_info(obj: Hotel) -> Hotel:
-    """
-    Данная функция принимает в качестве аргумента объект класса Hotel и возвращает модифицированный объект
-    с дополнительной информацией о количестве комнат, количестве гостей, вместимости,
-    количестве свободных мест, потенциальном количестве мест, а также степени загруженности отеля.
-    """
-    rooms = obj.room_set.all()
-    rooms_in_hotel = len(rooms)
-    number_guest_in_hotel = rooms.aggregate(Sum("number_guests"))["number_guests__sum"]
-    capacity_in_hotel = rooms.aggregate(Sum("capacity"))["capacity__sum"]
+def get_title_objects_info(date_checkin, date_checkout, hotel=None):
+    rooms = Room.objects.all()
+    hotels = Hotel.objects.all()
+    objects = []
+    if hotel is not None:
+        objects = get_booking(hotel, date_checkin, date_checkout, rooms)
+    else:
+        for hotel in hotels:
+            objects.append(get_booking(hotel, date_checkin, date_checkout, rooms))
+    return objects
+
+
+def get_booking(hotel, date_checkin, date_checkout, rooms):
+    hotel_rooms = rooms.filter(hotel=hotel)
+    bookings = Booking.objects.filter(Q(date_checkin__range=(date_checkin, date_checkout)) | Q(
+        date_checkout__range=(date_checkin, date_checkout)), room__hotel_id=hotel.id)
+    rooms_in_hotel = len(hotel_rooms)
+    number_guest_in_hotel = len(bookings.select_related('guest'))
+    if not isinstance(number_guest_in_hotel, int):
+        number_guest_in_hotel = 0
+    capacity_in_hotel = rooms.filter(hotel_id=hotel.id).aggregate(Sum("capacity"))["capacity__sum"]
     extra_places_in_hotel = rooms.aggregate(Sum("over_booking"))["over_booking__sum"]
-    free_place_hotel = capacity_in_hotel - number_guest_in_hotel
+    free_place_hotel = int(capacity_in_hotel) - int(number_guest_in_hotel)
     potential_places_hotel = extra_places_in_hotel + capacity_in_hotel
-    setattr(obj, "number_guest_in_hotel", number_guest_in_hotel)
-    setattr(obj, "rooms_in_hotel", rooms_in_hotel)
-    setattr(obj, "capacity_in_hotel", capacity_in_hotel)
-    setattr(obj, "extra_places_in_hotel", extra_places_in_hotel)
-    setattr(obj, "free_place_hotel", free_place_hotel)
-    setattr(obj, "potential_places_hotel", potential_places_hotel)
-    setattr(obj, "fullness_hotel", round((number_guest_in_hotel * 100) / capacity_in_hotel))
-    return obj
-
-
-def fake_hotels_rooms():
-    fake = Faker()
-
-    # Создаем 5 отелей
-    hotels = [Hotel.objects.create(name=fake.company()) for _ in
-              range(5)]
-
-    # Создаем 50 номеров (10 номеров на каждый отель)
-    for hotel in hotels:
-        for i in range(10):
-            name = fake.word() + " Room"
-            capacity = random.choice([2, 3, 4])
-            price = random.randint(50, 200)
-            fullness = random.choice(["full", "partially", "empty"])
-            number_guests = random.randint(0, capacity)
-            over_booking = random.randint(0, 2)
-            Room.objects.create(name=name, hotel=hotel, capacity=capacity, price=price, fullness=fullness,
-                                number_guests=number_guests, over_booking=over_booking)
+    setattr(hotel, "number_guest_in_hotel", number_guest_in_hotel)
+    setattr(hotel, "rooms_in_hotel", rooms_in_hotel)
+    setattr(hotel, "capacity_in_hotel", capacity_in_hotel)
+    setattr(hotel, "extra_places_in_hotel", extra_places_in_hotel)
+    setattr(hotel, "free_place_hotel", free_place_hotel)
+    setattr(hotel, "potential_places_hotel", potential_places_hotel)
+    setattr(hotel, "fullness_hotel", round((number_guest_in_hotel * 100) / capacity_in_hotel))
+    return hotel
 
 
 def get_equivalent_products(product: Groceries, goods: Goods):
@@ -100,3 +88,35 @@ def get_products(model):
     for product in products:
         get_equivalent_products(product, Goods)
     return products
+
+
+def validate_date(request):
+    if request.GET.get("start_date"):
+        start_date = datetime.strptime(request.GET.get("start_date"), "%Y-%m-%d")
+    else:
+        start_date = datetime.today().date()
+
+    if request.GET.get("end_date"):
+        end_date = datetime.strptime(request.GET.get("end_date"), "%Y-%m-%d")
+    else:
+        end_date = datetime.today().date()
+    return start_date, end_date
+
+
+def fake_booking():
+    fake = Faker()
+    rooms = Room.objects.all()
+    guests = Guest.objects.all()
+
+    for _ in range(100):
+        checkin_date = fake.date_between(start_date="-1y", end_date="+1y")
+        checkout_date = checkin_date + timedelta(days=random.randint(1, 14))
+        random_room = random.choice(rooms)
+        random_guest = random.choice(guests)
+
+        Booking.objects.create(
+            room=random_room,
+            guest=random_guest,
+            date_checkin=checkin_date,
+            date_checkout=checkout_date
+        )

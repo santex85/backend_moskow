@@ -59,13 +59,14 @@ class Group(models.Model):
 
 
 class Guest(models.Model):
-    name = models.CharField("Имя", max_length=256)
-    surname = models.CharField("Фамилия", max_length=256)
-    telephone = models.CharField("Телефон", max_length=256)
+    first_name = models.CharField("Имя", max_length=256)
+    last_name = models.CharField("Фамилия", max_length=256)
+    telephone = models.CharField("Телефон", max_length=512)
     group = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True, default=None)
+    room = models.ForeignKey("Room", on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.name}, {self.surname}"
+        return f"{self.first_name} {self.last_name}"
 
     class Meta:
         verbose_name = "Гость"
@@ -96,7 +97,6 @@ class Booking(models.Model):
     guest = models.ForeignKey(Guest, on_delete=models.CASCADE)
     date_checkin = models.DateField("Дата заселения")
     date_checkout = models.DateField("Дата выселения")
-    hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE)
 
 
 class Goods(models.Model):
