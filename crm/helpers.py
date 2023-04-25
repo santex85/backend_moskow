@@ -1,3 +1,4 @@
+import copy
 import random
 from datetime import datetime, timedelta, date
 from typing import List, Tuple
@@ -23,30 +24,6 @@ def change_fullness(room: Room):
     room.save()
 
 
-def get_title_objects_info(date_checkin: date, date_checkout, hotel: Hotel = None) -> List[List[Booking]]:
-    """
-        Возвращает список списков объектов `Booking` для всех отелей или для указанного отеля `hotel`,
-        которые доступны для бронирования в указанный период.
-
-        Если указан конкретный отель, то возвращается список `Booking` для этого отеля.
-        Если `hotel` не указан, то возвращается список списков `Booking` для всех отелей.
-
-        :param date_checkin: Объект `date`, представляющий дату заезда.
-        :param date_checkout: Объект `date`, представляющий дату выезда.
-        :param hotel: Опциональный объект `Hotel`, представляющий искомый отель.
-        :return: Список списков объектов `Booking` для всех отелей или для указанного отеля `hotel`.
-        """
-    rooms = Room.objects.all()
-    hotels = Hotel.objects.all()
-    objects = []
-    if hotel is not None:
-        objects = get_booking(hotel, date_checkin, date_checkout, rooms)
-    else:
-        for hotel in hotels:
-            objects.append(get_booking(hotel, date_checkin, date_checkout, rooms))
-    return objects
-
-
 def get_booking(hotel, date_checkin, date_checkout, rooms):
     """
         Вычисляет информацию об заполненности и вместимости для заданного `hotel` в указанный период дат заезда и
@@ -69,14 +46,15 @@ def get_booking(hotel, date_checkin, date_checkout, rooms):
     extra_places_in_hotel = rooms.aggregate(Sum("over_booking"))["over_booking__sum"]
     free_place_hotel = int(capacity_in_hotel) - int(number_guest_in_hotel)
     potential_places_hotel = extra_places_in_hotel + capacity_in_hotel
-    setattr(hotel, "number_guest_in_hotel", number_guest_in_hotel)
-    setattr(hotel, "rooms_in_hotel", rooms_in_hotel)
-    setattr(hotel, "capacity_in_hotel", capacity_in_hotel)
-    setattr(hotel, "extra_places_in_hotel", extra_places_in_hotel)
-    setattr(hotel, "free_place_hotel", free_place_hotel)
-    setattr(hotel, "potential_places_hotel", potential_places_hotel)
-    setattr(hotel, "fullness_hotel", round((number_guest_in_hotel * 100) / capacity_in_hotel))
-    return hotel
+    hotel_copy = copy.copy(hotel)
+    setattr(hotel_copy, "number_guest_in_hotel", number_guest_in_hotel)
+    setattr(hotel_copy, "rooms_in_hotel", rooms_in_hotel)
+    setattr(hotel_copy, "capacity_in_hotel", capacity_in_hotel)
+    setattr(hotel_copy, "extra_places_in_hotel", extra_places_in_hotel)
+    setattr(hotel_copy, "free_place_hotel", free_place_hotel)
+    setattr(hotel_copy, "potential_places_hotel", potential_places_hotel)
+    setattr(hotel_copy, "fullness_hotel", round((number_guest_in_hotel * 100) / capacity_in_hotel))
+    return hotel_copy
 
 
 def get_equivalent_products(product: Groceries, goods: Goods):

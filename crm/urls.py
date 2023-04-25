@@ -1,4 +1,3 @@
-from django.contrib import admin
 from django.urls import path
 from . import views
 
@@ -22,4 +21,5 @@ urlpatterns = [
     path('groups/', views.GroupsView.as_view(), name="groups"),
     path('group/<pk>', views.GroupView.as_view(), name="group"),
     path('object/<pk>', views.ObjectView.as_view(), name="object"),
+    path('hotel/<pk>', views.HotelView.as_view(), name="hotel"),
 ]

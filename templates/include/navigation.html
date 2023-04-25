@@ -1,87 +1,101 @@
 {% with request.resolver_match.url_name as url_name %}
     <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
-    <div class="container">
-    <a class="navbar-brand" href="{% url 'index' %}">Admin Hotel</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-    <li class="nav-item">
-        <a class="nav-link {% if url_name == 'index' %}active{% endif %}" aria-current="page" href="{% url 'index' %}">Главная</a>
-    </li>
-    <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-           aria-expanded="false">
-            Отчеты
-        </a>
-        <ul class="dropdown-menu">
-            <li><a class="dropdown-item {% if url_name == 'report-period' %}active{% endif %}" href="{% url "report-period" %}">Отчёт за период</a></li>
-            <li><a class="dropdown-item  {% if url_name == 'report-group' %}active{% endif %}" href="{% url "report-group" %}">Отчёт по группе</a></li>
-            <li><a class="dropdown-item {% if url_name == 'report-inline' %}active{% endif %}" href="{% url "report-inline" %}">Отчёт по строкам за
-                весь период</a></li>
-        </ul>
-    </li>
-    <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-           aria-expanded="false">
-            Заселения
-        </a>
-        <ul class="dropdown-menu">
-            <li><a class="dropdown-item {% if url_name == 'early-booking-group' %}active{% endif %}" href="{% url "early-booking-group" %}">Предварительное заселения
-                группы</a></li>
-            <li><a class="dropdown-item {% if url_name == 'booking-group' %}active{% endif %}" href="{% url "booking-group" %}">Заселение группы</a></li>
-            <li><a class="dropdown-item {% if url_name == 'booking-guest' %}active{% endif %}" href="{% url "booking-guest" %}">Заселение гостя</a></li>
-        </ul>
-    </li>
-    <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-           aria-expanded="false">
-            Учет
-        </a>
-        <ul class="dropdown-menu">
-            <li><a class="dropdown-item {% if url_name == 'warehouse-accounting' %}active{% endif %}" href="{% url "warehouse-accounting" %}">Склад</a></li>
-            <li><a class="dropdown-item {% if url_name == 'kitchen-accounting' %}active{% endif %}" href="{% url "kitchen-accounting" %}">Кухня</a></li>
-        </ul>
-    </li>
-    <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-           aria-expanded="false">
-            Календари
-        </a>
-        <ul class="dropdown-menu">
-            <li><a class="dropdown-item {% if url_name == 'calendar-hall' %}active{% endif %}" href="{% url "calendar-hall" %}">Зал</a></li>
-            <li><a class="dropdown-item {% if url_name == 'calendar-sauna' %}active{% endif %}" href="{% url "calendar-sauna" %}">Баня</a></li>
-        </ul>
-    </li>
-    <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-           aria-expanded="false">
-            Касса
-        </a>
-        <ul class="dropdown-menu">
-            <li><a class="dropdown-item {% if url_name == 'cashier-outcome' %}active{% endif %}" href="{% url "cashier-outcome" %}">Расходы</a></li>
-            <li><a class="dropdown-item {% if url_name == 'cashier-income' %}active{% endif %}" href="{% url "cashier-income" %}">Доходы</a></li>
-        </ul>
-    </li>
-    <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-           aria-expanded="false">
-            Гости
-        </a>
-        <ul class="dropdown-menu">
-            <li><a class="dropdown-item {% if url_name == 'guests' %}active{% endif %}" href="{% url "guests" %}">Гости</a></li>
-            <li><a class="dropdown-item {% if url_name == 'groups' %}active{% endif %}" href="{% url "groups" %}">Группы</a></li>
-        </ul>
-    </li>
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'index' %}">Admin Hotel</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link {% if url_name == 'index' %}active{% endif %}" aria-current="page"
+                           href="{% url 'index' %}">Главная</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                           aria-expanded="false">
+                            Касса
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item {% if url_name == 'cashier-outcome' %}active{% endif %}"
+                                   href="{% url "cashier-outcome" %}">Расход</a></li>
+                            <li><a class="dropdown-item {% if url_name == 'cashier-income' %}active{% endif %}"
+                                   href="{% url "cashier-income" %}">Приход</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                           aria-expanded="false">
+                            Отчеты
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item {% if url_name == 'report-period' %}active{% endif %}"
+                                   href="{% url "report-period" %}">Отчёт за период</a></li>
+                            <li><a class="dropdown-item  {% if url_name == 'report-group' %}active{% endif %}"
+                                   href="{% url "report-group" %}">Отчёт по группе</a></li>
+                            <li><a class="dropdown-item {% if url_name == 'report-inline' %}active{% endif %}"
+                                   href="{% url "report-inline" %}">Отчёт по строкам за
+                                весь период</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                           aria-expanded="false">
+                            Заселения
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item {% if url_name == 'early-booking-group' %}active{% endif %}"
+                                   href="{% url "early-booking-group" %}">Предварительное заселения
+                                группы</a></li>
+                            <li><a class="dropdown-item {% if url_name == 'booking-group' %}active{% endif %}"
+                                   href="{% url "booking-group" %}">Заселение группы</a></li>
+                            <li><a class="dropdown-item {% if url_name == 'booking-guest' %}active{% endif %}"
+                                   href="{% url "booking-guest" %}">Заселение гостя</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                           aria-expanded="false">
+                            Учет
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item {% if url_name == 'warehouse-accounting' %}active{% endif %}"
+                                   href="{% url "warehouse-accounting" %}">Склад</a></li>
+                            <li><a class="dropdown-item {% if url_name == 'kitchen-accounting' %}active{% endif %}"
+                                   href="{% url "kitchen-accounting" %}">Кухня</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                           aria-expanded="false">
+                            Календари
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item {% if url_name == 'calendar-hall' %}active{% endif %}"
+                                   href="{% url "calendar-hall" %}">Зал</a></li>
+                            <li><a class="dropdown-item {% if url_name == 'calendar-sauna' %}active{% endif %}"
+                                   href="{% url "calendar-sauna" %}">Баня</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                           aria-expanded="false">
+                            Гости
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item {% if url_name == 'guests' %}active{% endif %}"
+                                   href="{% url "guests" %}">Гости</a></li>
+                            <li><a class="dropdown-item {% if url_name == 'groups' %}active{% endif %}"
+                                   href="{% url "groups" %}">Группы</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 {% endwith %}
 
-</ul>
-<form class="d-flex" role="search">
-    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-    <button class="btn btn-outline-success" type="submit">Search</button>
-</form>
-</div>
-</div>
-</nav>
+
+

@@ -1,8 +1,20 @@
-{% include "base.html" %}
-{% block context %}
+{% extends "base.html" %}
+{% load static %}
+{% load django_bootstrap5 %}
+{% block content %}
     <div class="container">
         <div class="row">
             <h3 class="mt-3">Приход</h3>
         </div>
+        <div class="row">
+            <div class="col-md-4">
+                <form method="post" class="form mb-3" action="{% url "cashier-income" %}">
+                    {% csrf_token %}
+                    {% bootstrap_form form %}
+                    {% bootstrap_button button_type="submit" content="Отправить" %}
+                </form>
+            </div>
+        </div>
     </div>
+    <script src="{% static 'js/cashier.js' %}"></script>
 {% endblock %}

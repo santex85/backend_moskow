@@ -1,5 +1,5 @@
 from django import forms
-from crm.models import Group, Groceries, Household
+from crm.models import Group, Groceries, Household, Cashier
 
 
 class BookingGroupForm(forms.ModelForm):
@@ -34,3 +34,21 @@ class HouseholdUpdateForm(forms.ModelForm):
     class Meta:
         model = Groceries
         fields = ["how_many_unit", "price"]
+
+
+class IncomeForm(forms.ModelForm):
+    class Meta:
+        model = Cashier
+        fields = ["hotel", "date_service", "employee", "guest", "group", "services", "outcomes", "cashless"]
+        widgets = {
+            "date_service": forms.DateInput(attrs={'type': 'date'}),
+        }
+
+
+class OutcomeForm(forms.ModelForm):
+    class Meta:
+        model = Cashier
+        fields = ["hotel", "date_service", "employee", "guest", "group", "services", "outcomes", "cashless"]
+        widgets = {
+            "date_service": forms.DateInput(attrs={'type': 'date'}),
+        }

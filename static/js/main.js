@@ -8,3 +8,7 @@ startDate.addEventListener("input", () => {
         document.getElementById("submit-date").classList.remove("disabled")
     })
 })
+
+
+// работа с формами кассы
+

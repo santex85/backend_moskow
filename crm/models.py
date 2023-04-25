@@ -1,3 +1,4 @@
+import django.utils.timezone as timezone
 from django.contrib.auth.models import User
 from django.db import models
 
@@ -30,7 +31,7 @@ class Employee(User):
     hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE, null=True, default=None)
 
     def __str__(self):
-        return f"{self.username}"
+        return f"{self.first_name} {self.last_name}"
 
     class Meta:
         verbose_name = "Сотрудник"
@@ -64,6 +65,7 @@ class Guest(models.Model):
     telephone = models.CharField("Телефон", max_length=512)
     group = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True, default=None)
     room = models.ForeignKey("Room", on_delete=models.CASCADE)
+    in_hotel = models.BooleanField("В отеле", default=True)
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
@@ -180,16 +182,21 @@ class Service(models.Model):
 
 
 class Cashier(models.Model):
-    incomes = models.IntegerField("Входящие средства")
-    outcomes = models.IntegerField("Расходы")
-    datetime = models.DateTimeField("Дата и время операции", auto_now=True)
-    employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
-    guest = models.ForeignKey(Guest, on_delete=models.CASCADE)
-    group = models.ForeignKey(Group, on_delete=models.CASCADE, null=True, blank=True)
-    services = models.ForeignKey(Service, on_delete=models.CASCADE)
+    incomes = models.IntegerField("Приход(сумма)", null=True, blank=True)
+    outcomes = models.IntegerField("Расходы(сумма)", null=True, blank=True)
+    date_create = models.DateTimeField("Дата и время операции", auto_now=True)
+    date_service = models.DateField(verbose_name="Дата услуги", default=timezone.now)
+    hotel = models.ForeignKey(Hotel, verbose_name="Объект", on_delete=models.CASCADE)
+    employee = models.ForeignKey(Employee, verbose_name="Сотрудник", on_delete=models.CASCADE, null=True,
+                                 blank=True)
+    guest = models.ForeignKey(Guest, verbose_name="Гость", on_delete=models.CASCADE, null=True,
+                              blank=True)
+    group = models.ForeignKey(Group, verbose_name="Группа", on_delete=models.CASCADE, null=True, blank=True)
+    services = models.ForeignKey(Service, verbose_name="Услуга", on_delete=models.CASCADE, null=True, blank=True)
+    cashless = models.BooleanField("Безнал", default=False)
 
     def __str__(self):
-        return f"{self.services}, {self.guest.name}"
+        return f"{self.services}"
 
     class Meta:
         verbose_name = "Касса"
