@@ -40,8 +40,6 @@ employeeField.addEventListener('click', function () {
     servicesField.disabled = false;
     groupField.innerHTML = '';
     groupField.disabled = true;
-
-
 });
 
 // события выбора гостя
@@ -49,7 +47,12 @@ guestField.addEventListener('click', function () {
     employeeField.selectedIndex = 0;
     employeeField.disabled = true;
     groupField.disabled = false;
-    incomesField.disabled = false;
+    if (incomesField) {
+        incomesField.disabled = false;
+
+    } else {
+        outcomesField.disabled = false;
+    }
     servicesField.disabled = false;
 })
 
