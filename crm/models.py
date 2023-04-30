@@ -169,16 +169,28 @@ class Sauna(BookingServices):
         verbose_name_plural = "Сауны"
 
 
-class Service(models.Model):
-    name = models.CharField("Название услуги", max_length=256)
-    description = models.TextField("Описание услуги", null=True, blank=True)
+class CategoryIncome(models.Model):
+    name = models.CharField("Название категории", max_length=256)
+    description = models.TextField("Описание категории", null=True, blank=True)
 
     def __str__(self):
         return f"{self.name}"
 
     class Meta:
-        verbose_name = "Услуга"
-        verbose_name_plural = "Услуги"
+        verbose_name = "Категория прихода"
+        verbose_name_plural = "Категории прихода"
+
+
+class CategoryOutcome(models.Model):
+    name = models.CharField("Название категории", max_length=256)
+    description = models.TextField("Описание категории", null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.name}"
+
+    class Meta:
+        verbose_name = "Категория расхода"
+        verbose_name_plural = "Категории расхода"
 
 
 class Cashier(models.Model):
@@ -187,16 +199,42 @@ class Cashier(models.Model):
     date_create = models.DateTimeField("Дата и время операции", auto_now=True)
     date_service = models.DateField(verbose_name="Дата услуги", default=timezone.now)
     hotel = models.ForeignKey(Hotel, verbose_name="Объект", on_delete=models.CASCADE)
-    employee = models.ForeignKey(Employee, verbose_name="Сотрудник", on_delete=models.CASCADE, null=True,
+    employee = models.ForeignKey(Employee,
+                                 verbose_name="Сотрудник",
+                                 on_delete=models.CASCADE,
+                                 null=True,
                                  blank=True)
-    guest = models.ForeignKey(Guest, verbose_name="Гость", on_delete=models.CASCADE, null=True,
+
+    guest = models.ForeignKey(Guest,
+                              verbose_name="Гость",
+                              on_delete=models.CASCADE,
+                              null=True,
                               blank=True)
-    group = models.ForeignKey(Group, verbose_name="Группа", on_delete=models.CASCADE, null=True, blank=True)
-    services = models.ForeignKey(Service, verbose_name="Услуга", on_delete=models.CASCADE, null=True, blank=True)
+
+    group = models.ForeignKey(Group,
+                              verbose_name="Группа",
+                              on_delete=models.CASCADE,
+                              null=True,
+                              blank=True)
+
+    category_income = models.ForeignKey(CategoryIncome,
+                                        verbose_name="Категория прихода",
+                                        on_delete=models.CASCADE,
+                                        null=True,
+                                        blank=True)
+
+    category_outcome = models.ForeignKey(CategoryOutcome,
+                                         verbose_name="Категория расхода",
+                                         on_delete=models.CASCADE,
+                                         null=True,
+                                         blank=True)
+
     cashless = models.BooleanField("Безнал", default=False)
 
+    comment = models.TextField("Комментарий", null=True, blank=True)
+
     def __str__(self):
-        return f"{self.services}"
+        return f"{self.hotel}"
 
     class Meta:
         verbose_name = "Касса"

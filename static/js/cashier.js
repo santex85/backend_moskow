@@ -4,10 +4,12 @@ const dateField = document.querySelector('#id_date_service');
 const employeeField = document.querySelector('#id_employee');
 const guestField = document.querySelector('#id_guest');
 const groupField = document.querySelector('#id_group');
-const servicesField = document.querySelector('#id_services');
 const incomesField = document.querySelector('#id_incomes');
 const outcomesField = document.querySelector('#id_outcomes');
 const cashlessField = document.querySelector('#id_cashless');
+const categoryOutcomeField = document.querySelector('#id_category_outcome');
+const categoryIncomeField = document.querySelector('#id_category_income');
+const commentField = document.querySelector('#id_comment');
 
 // отключаем поля кроме выбора отеля
 setDisabled()
@@ -25,21 +27,18 @@ hotelField.addEventListener('change', function () {
 dateField.addEventListener('change', function () {
     employeeField.disabled = false;
     guestField.disabled = false;
-    if (incomesField) {
-        incomesField.disabled = false;
-    } else {
-        outcomesField.disabled = false;
-    }
-    cashlessField.disabled = false;
+    checkAvailableElement(incomesField, outcomesField, false)
 });
 
 // события выбора сотрудника
 employeeField.addEventListener('click', function () {
     guestField.innerHTML = '';
     guestField.disabled = true;
-    servicesField.disabled = false;
     groupField.innerHTML = '';
     groupField.disabled = true;
+    checkAvailableElement(categoryIncomeField,categoryOutcomeField, false);
+    commentField.disabled = false;
+    cashlessField.disabled = false;
 });
 
 // события выбора гостя
@@ -47,13 +46,9 @@ guestField.addEventListener('click', function () {
     employeeField.selectedIndex = 0;
     employeeField.disabled = true;
     groupField.disabled = false;
-    if (incomesField) {
-        incomesField.disabled = false;
-
-    } else {
-        outcomesField.disabled = false;
-    }
-    servicesField.disabled = false;
+    cashlessField.disabled = false;
+    checkAvailableElement(categoryIncomeField,categoryOutcomeField, false);
+    commentField.disabled = false;
 })
 
 
@@ -72,7 +67,13 @@ function resetFields() {
     employeeField.selectedIndex = 0;
     guestField.selectedIndex = 0;
     groupField.selectedIndex = 0;
-    servicesField.selectedIndex = 0;
+    if (categoryIncomeField) {
+        categoryIncomeField.selectedIndex = 0;
+
+    } else {
+        categoryOutcomeField.selectedIndex = 0;
+
+    }
 
     // Активируем поле даты
     dateField.disabled = false;
@@ -89,13 +90,10 @@ function setDisabled() {
     employeeField.disabled = true;
     guestField.disabled = true;
     groupField.disabled = true;
-    servicesField.disabled = true;
-    if (incomesField) {
-        incomesField.disabled = true;
-    } else {
-        outcomesField.disabled = true;
-    }
-    cashlessField.disabled = true;
+    checkAvailableElement(categoryIncomeField, categoryOutcomeField, true)
+    checkAvailableElement(incomesField, outcomesField, true)
+    commentField.disabled = true
+    cashlessField.disabled = true
 }
 
 /**
@@ -128,12 +126,6 @@ function getCookie(name) {
     // Возвращаем значение cookie или null, если cookie не найден
     return cookieValue;
 }
-
-/**
- * Отправляет AJAX-запрос на сервер и обновляет соответствующие селекторы на странице.
- *
- * @return {void} Ничего не возвращает.
- */
 
 /**
  * Отправляет AJAX-запрос на сервер и обновляет соответствующие селекторы на странице.
@@ -203,4 +195,12 @@ function addFirstSelection(field) {
     option.value = ''
     option.text = '---------'
     field.add(option)
+}
+
+function checkAvailableElement(element1, element2, action) {
+    if (element1) {
+        element1.disabled = action;
+    } else {
+        element2.disabled = action;
+    }
 }

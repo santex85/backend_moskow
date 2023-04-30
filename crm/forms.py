@@ -39,7 +39,9 @@ class HouseholdUpdateForm(forms.ModelForm):
 class IncomeForm(forms.ModelForm):
     class Meta:
         model = Cashier
-        fields = ["hotel", "date_service", "employee", "guest", "group", "services", "outcomes", "cashless"]
+
+        fields = ["hotel", "date_service", "employee", "guest", "group", "category_income", "incomes", "cashless",
+                  "comment"]
         widgets = {
             "date_service": forms.DateInput(attrs={'type': 'date'}),
         }
@@ -48,7 +50,9 @@ class IncomeForm(forms.ModelForm):
 class OutcomeForm(forms.ModelForm):
     class Meta:
         model = Cashier
-        fields = ["hotel", "date_service", "employee", "guest", "group", "services", "outcomes", "cashless"]
+
+        fields = ["hotel", "date_service", "employee", "guest", "group", "category_outcome", "outcomes", "cashless",
+                  "comment"]
         widgets = {
             "date_service": forms.DateInput(attrs={'type': 'date'}),
         }

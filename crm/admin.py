@@ -3,7 +3,7 @@ from django.urls import reverse
 from django.utils.html import format_html
 
 from .models import Employee, Position, Room, Hotel, Groceries, Household, InventoryControl, Group, Booking, Guest, \
-    Service
+    CategoryIncome, CategoryOutcome
 from django.contrib.auth.admin import UserAdmin
 
 
@@ -74,11 +74,16 @@ class GuestAdmin(admin.ModelAdmin):
     list_display = ('first_name', 'last_name', 'telephone', 'group', 'room')
 
 
-class ServiceAdmin(admin.ModelAdmin):
+class CategoryIncomeAdmin(admin.ModelAdmin):
     list_display = ('name', 'description')
 
 
-admin.site.register(Service, ServiceAdmin)
+class CategoryOutcomeAdmin(admin.ModelAdmin):
+    list_display = ('name', 'description')
+
+
+admin.site.register(CategoryIncome, CategoryIncomeAdmin)
+admin.site.register(CategoryOutcome, CategoryOutcomeAdmin)
 admin.site.register(Guest, GuestAdmin)
 admin.site.register(Booking, BookingAdmin)
 admin.site.register(Group, GroupAdmin)

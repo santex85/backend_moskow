@@ -189,24 +189,10 @@ class KitchenUpdateView(View):
             return render(request, 'crm/kitchen_accounting.html', context)
 
 
-class ReportPeriodView(View):
+class ReportView(View):
     @staticmethod
     def get(request):
-        return render(request, 'crm/report_period.html')
-
-
-def get(request):
-    return render(request, 'crm/report_group.html')
-
-
-class ReportGroupView(View):
-    pass
-
-
-class ReportInlineView(View):
-    @staticmethod
-    def get(request):
-        return render(request, 'crm/report_inline.html')
+        return render(request, 'crm/report.html')
 
 
 class BookingGroupView(View):

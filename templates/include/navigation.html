@@ -25,20 +25,9 @@
                                    href="{% url "cashier-income" %}">Приход</a></li>
                         </ul>
                     </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                           aria-expanded="false">
-                            Отчеты
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item {% if url_name == 'report-period' %}active{% endif %}"
-                                   href="{% url "report-period" %}">Отчёт за период</a></li>
-                            <li><a class="dropdown-item  {% if url_name == 'report-group' %}active{% endif %}"
-                                   href="{% url "report-group" %}">Отчёт по группе</a></li>
-                            <li><a class="dropdown-item {% if url_name == 'report-inline' %}active{% endif %}"
-                                   href="{% url "report-inline" %}">Отчёт по строкам за
-                                весь период</a></li>
-                        </ul>
+                    <li class="nav-item">
+                       <a class="nav-link {% if url_name == 'index' %}active{% endif %}" aria-current="page"
+                           href="{% url 'report' %}">Отчеты</a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
