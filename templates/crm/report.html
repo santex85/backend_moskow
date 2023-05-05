@@ -3,21 +3,27 @@
 {% block context %}
     <div class="container">
         <div class="row">
-            <h2 class="mt-3">Отчет</h2>
+            <div class="col">
+                <h2 class="mt-3">Отчет</h2>
+            </div>
+            <div class="col">
+                <h4 class="mt-3">Наличные в кассе: {{ cash_on_hand }} &#8381;</h4>
+            </div>
         </div>
         <div class="row">
             <form method="get" action="{% url "report" %}">
                 <div class="col mt-3">
                     <h3>Период</h3>
                     <div class="row row-cols-lg-auto g-3 align-items-center">
-
                         <div class="col-12">
                             <label for="finish-date-report" class="form-label">Начало</label>
-                            <input value="{{ finish_date|date:"Y-m-d" }}" type="date" class="form-control" id="finish-date-report" name="finish_date_report">
+                            <input value="{{ finish_date|date:"Y-m-d" }}" type="date" class="form-control"
+                                   id="finish-date-report" name="finish_date_report">
                         </div>
                         <div class="col-12">
                             <label for="start-date-report" class="form-label">Конец</label>
-                            <input value="{{ start_date|date:"Y-m-d" }}" type="date" class="form-control" id="start-date-report" name="start_date_report">
+                            <input value="{{ start_date|date:"Y-m-d" }}" type="date" class="form-control"
+                                   id="start-date-report" name="start_date_report">
                         </div>
 
                         <span>или</span>
@@ -50,9 +56,9 @@
                                 <option value="yesterday">Группа 2</option>
                             </select>
                         </div>
-{#                        todo выбор объекта#}
+                        {#                        todo выбор объекта#}
                     </div>
-                        <button class="btn btn-secondary mt-3" type="submit">Сгенерировать отчет</button>
+                    <button class="btn btn-secondary mt-3" type="submit">Сгенерировать отчет</button>
 
                 </div>
             </form>
@@ -71,11 +77,11 @@
                 </thead>
                 <tbody>
                 {% for balance in balances %}
-                 <tr>
-                    <td><a href="{% url "report-detail" balance.date_service %}">{{ balance.date_service }}</a></td>
+                    <tr>
+                        <td><a href="{% url "report-detail" balance.date_service %}">{{ balance.date_service }}</a></td>
 
-                    <td>{{ balance.balance }}</td>
-                </tr>
+                        <td>{{ balance.balance }}</td>
+                    </tr>
                 {% endfor %}
                 </tbody>
             </table>

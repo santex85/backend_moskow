@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 from crm.forms import BookingGroupForm, KitchenForm, KitchenUpdateForm, HouseholdForm, HouseholdUpdateForm, \
     IncomeForm, OutcomeForm
-from crm.helpers import get_products, validate_date, get_booking, get_date_for_report
+from crm.helpers import get_products, validate_date, get_booking, get_date_for_report, get_cash_on_hand
 from crm.models import Group, Hotel, Room, Goods, Groceries, Household, InventoryControl, Employee, Guest, Cashier
 
 
@@ -194,6 +194,8 @@ class ReportView(View):
     def get(request):
         start_date, finish_date = get_date_for_report(request)
 
+        cash_on_hand = get_cash_on_hand()
+
         balances = (
             Cashier.objects.filter(date_service__lte=start_date, date_service__gte=finish_date)
             .values("date_service")
@@ -209,6 +211,7 @@ class ReportView(View):
             "balances": balances,
             "start_date": start_date,
             "finish_date": finish_date,
+            "cash_on_hand": cash_on_hand,
         }
         print(start_date, finish_date)
         return render(request, "crm/report.html", context)
@@ -219,6 +222,8 @@ class ReportDetail(View):
     def get(request, date):
         date = datetime.strptime(date, "%Y-%m-%d")
         cashier_categories = Cashier.objects.filter(date_service=date).order_by("category_outcome", "category_income")
+
+        cash_on_hand = get_cash_on_hand()
 
         incomes = (
             Cashier.objects
@@ -251,6 +256,7 @@ class ReportDetail(View):
             "outcomes": outcomes,
             "sum_incomes": sum_incomes,
             "sum_outcomes": sum_outcomes,
+            "cash_on_hand": cash_on_hand
         }
         return render(request, "crm/report-detail.html", context)
 

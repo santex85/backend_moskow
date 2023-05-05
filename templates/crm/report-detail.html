@@ -5,7 +5,13 @@
         <div class="row mt-3">
             <div class="col">
                 <h4>Дата отчета: {{ date_report|date:"d.m.Y" }}</h4>
-
+            </div>
+            <div class="col">
+                <h4>Наличные в кассе: {{ cash_on_hand }} &#8381;</h4>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col">
                 <div class="accordion" id="accordionExample">
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="headingOne">
@@ -21,16 +27,13 @@
                                     <thead>
                                     <tr>
                                         <th scope="col">Имя фамилия</th>
-
                                         <th scope="col">Категория</th>
                                         <th scope="col">Сумма</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     {% for income in incomes %}
-
                                         <tr>
-
                                             <td>
                                                 {% if income.guest__first_name is None %}
                                                     {{ income.employee__first_name }} {{ income.employee__last_name }}
@@ -85,9 +88,11 @@
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
+
 
 
 {% endblock %}

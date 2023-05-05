@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from typing import Tuple
 
 from django.db.models import Sum, Q
-from crm.models import Room, Groceries, Goods, Booking
+from crm.models import Room, Groceries, Goods, Booking, Cashier
 
 
 def change_fullness(room: Room):
@@ -123,3 +123,24 @@ def get_date_for_report(request):
         finish_date = start_date - timedelta(days=10)
 
     return start_date, finish_date
+
+
+def get_cash_on_hand() -> int or None:
+    """
+        Вычисляет баланс кассы на основе значений доходов и расходов из модели Cashier.
+
+        :return: Баланс кассы.
+        """
+
+    # Получаем все объекты Cashier, у которых значение поля cashless равно False
+    cashless = Cashier.objects.all().exclude(cashless=True)
+
+    # Вычисляем общую сумму доходов и расходов для выбранных объектов Cashier
+    total_incomes = cashless.aggregate(Sum("incomes"))["incomes__sum"]
+    total_outcomes = cashless.aggregate(Sum("outcomes"))["outcomes__sum"]
+
+    # Вычисляем баланс кассы, вычитая из общей суммы расходов общую сумму доходов
+    cash_on_hand = total_incomes - total_outcomes or 0
+
+    # Возвращаем значение баланса кассы
+    return cash_on_hand
