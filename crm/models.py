@@ -194,8 +194,8 @@ class CategoryOutcome(models.Model):
 
 
 class Cashier(models.Model):
-    incomes = models.IntegerField("Приход(сумма)", null=True, blank=True)
-    outcomes = models.IntegerField("Расходы(сумма)", null=True, blank=True)
+    incomes = models.IntegerField("Приход(сумма)", default=0, blank=True)
+    outcomes = models.IntegerField("Расходы(сумма)", default=0, blank=True)
     date_create = models.DateTimeField("Дата и время операции", auto_now=True)
     date_service = models.DateField(verbose_name="Дата услуги", default=timezone.now)
     hotel = models.ForeignKey(Hotel, verbose_name="Объект", on_delete=models.CASCADE)
