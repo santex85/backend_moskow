@@ -26,39 +26,54 @@
                                    id="start-date-report" name="start_date_report">
                         </div>
 
-                        <span>или</span>
 
                         <div class="col-12">
-                            <label class="form-label" for="inlineFormSelectPref">Выберите период</label>
-                            <select class="form-select" id="inlineFormSelectPref">
-                                <option selected>------------</option>
-                                <option value="yesterday">Вчера</option>
-                                <option value="last-week">Прошлая неделя</option>
-                                <option value="last-month">Последний месяц</option>
-                                <option value="last-quarter">Последний квартал</option>
-                                <option value="last-year">Последний год</option>
+                            <label class="form-label" for="inlineFormSelectIncomeCategory">Категории прихода</label>
+                            <select class="form-select" id="inlineFormSelectIncomeCategory" name="category_income">
+                                <option selected></option>
+                                {% for income_category in income_categories %}
+                                    <option value="{{ income_category.id }}">{{ income_category }}</option>
+                                {% endfor %}
                             </select>
                         </div>
 
                         <div class="col-12">
-                            <label class="form-label" for="inlineFormSelectPref">Категории</label>
-                            <select class="form-select" id="inlineFormSelectPref">
-                                <option selected>------------</option>
-                                <option value="yesterday">Категории?</option>
+                            <label class="form-label" for="inlineFormSelectOutcomeCategory">Категории расхода</label>
+                            <select class="form-select" id="inlineFormSelectOutcomeCategory" name="category_outcome">
+                                <option selected></option>
+                                {% for outcome_category in outcome_categories %}
+                                    <option value="{{ outcome_category.id }}">{{ outcome_category }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+
+                        <div class="col-12">
+                            <label class="form-label" for="inlineFormSelectGroup">Группа</label>
+                            <select class="form-select" id="inlineFormSelectGroup" name="group">
+                                <option selected></option>
+                                {% for group in groups %}
+                                    <option value="{{ group.id }}">{{ group.name }}</option>
+                                {% endfor %}
                             </select>
                         </div>
 
                         <div class="col-12">
-                            <label class="form-label" for="inlineFormSelectPref">Группа</label>
-                            <select class="form-select" id="inlineFormSelectPref">
-                                <option selected>------------</option>
-                                <option value="yesterday">Группа 1</option>
-                                <option value="yesterday">Группа 2</option>
+                            <label class="form-label" for="inlineFormSelectObjets">Объекты</label>
+                            <select class="form-select" id="inlineFormSelectObjets" name="hotel">
+                                <option selected></option>
+                                {% for hotel in hotels %}
+                                    <option value="{{ hotel.id }}">{{ hotel.name }}</option>
+                                {% endfor %}
+
                             </select>
                         </div>
-                        {#                        todo выбор объекта#}
+
                     </div>
-                    <button class="btn btn-secondary mt-3" type="submit">Сгенерировать отчет</button>
+                    {#                    <button class="btn btn-secondary mt-3" type="submit">Сгенерировать отчет</button>#}
+
+                    <button class="btn btn-secondary mt-3" type="button" onclick="getReportAsync()">Сгенерировать отчет
+                    </button>
 
                 </div>
             </form>
@@ -79,7 +94,6 @@
                 {% for balance in balances %}
                     <tr>
                         <td><a href="{% url "report-detail" balance.date_service %}">{{ balance.date_service }}</a></td>
-
                         <td>{{ balance.balance }}</td>
                     </tr>
                 {% endfor %}
@@ -87,6 +101,5 @@
             </table>
         </div>
     </div>
-    <script src="{% static 'js/report.js' %}"></script>
-
+<script src="{% static "js/acync_report.js" %}"></script>
 {% endblock %}

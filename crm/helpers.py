@@ -3,6 +3,8 @@ from datetime import datetime, timedelta
 from typing import Tuple
 
 from django.db.models import Sum, Q
+from django.db.models.functions import Coalesce
+
 from crm.models import Room, Groceries, Goods, Booking, Cashier
 
 
@@ -144,3 +146,29 @@ def get_cash_on_hand() -> int or None:
 
     # Возвращаем значение баланса кассы
     return cash_on_hand
+
+
+def get_report_delta(start_date, finish_date, query=None):
+    if query is None:
+        balances = (
+            Cashier.objects.filter(date_service__lte=start_date, date_service__gte=finish_date)
+            .values("date_service")
+            .annotate(
+                total_incomes=Coalesce(Sum("incomes"), 0),
+                total_outcomes=Coalesce(Sum("outcomes"), 0),
+                balance=Coalesce(Sum("incomes"), 0) - Coalesce(Sum("outcomes"), 0),
+            )
+            .order_by("date_service")
+        )
+    else:
+        balances = (
+            Cashier.objects.filter(query, date_service__lte=start_date, date_service__gte=finish_date)
+            .values("date_service")
+            .annotate(
+                total_incomes=Coalesce(Sum("incomes"), 0),
+                total_outcomes=Coalesce(Sum("outcomes"), 0),
+                balance=Coalesce(Sum("incomes"), 0) - Coalesce(Sum("outcomes"), 0),
+            )
+            .order_by("date_service")
+        )
+    return balances

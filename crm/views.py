@@ -1,13 +1,17 @@
 from datetime import timedelta, datetime
-from django.db.models import Sum
+
+from django.core import serializers
+from django.db.models import Sum, Q
 from django.db.models.functions import Coalesce
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.views import View
 from crm.forms import BookingGroupForm, KitchenForm, KitchenUpdateForm, HouseholdForm, HouseholdUpdateForm, \
     IncomeForm, OutcomeForm
-from crm.helpers import get_products, validate_date, get_booking, get_date_for_report, get_cash_on_hand
-from crm.models import Group, Hotel, Room, Goods, Groceries, Household, InventoryControl, Employee, Guest, Cashier
+from crm.helpers import get_products, validate_date, get_booking, get_date_for_report, get_cash_on_hand, \
+    get_report_delta
+from crm.models import Group, Hotel, Room, Goods, Groceries, Household, InventoryControl, Employee, Guest, Cashier, \
+    CategoryIncome, CategoryOutcome
 
 
 class IndexView(View):
@@ -194,26 +198,46 @@ class ReportView(View):
     def get(request):
         start_date, finish_date = get_date_for_report(request)
 
+        request_ = request.GET
+
+        category_income = request_.get("category_income")
+        category_outcome = request_.get("category_outcome")
+        group = request_.get("group")
+        hotel = request_.get("hotel")
+
+        query = Q()
+
+        if category_income:
+            query &= Q(category_income_id=int(category_income))
+        if category_outcome:
+            query &= Q(category_outcome_id=int(category_outcome))
+        if group:
+            query &= Q(group_id=int(group))
+        if hotel:
+            query &= Q(hotel_id=int(hotel))
+        if not query.children:
+            balances = get_report_delta(start_date, finish_date)
+        else:
+            balances = get_report_delta(start_date, finish_date, query)
+
         cash_on_hand = get_cash_on_hand()
 
-        balances = (
-            Cashier.objects.filter(date_service__lte=start_date, date_service__gte=finish_date)
-            .values("date_service")
-            .annotate(
-                total_incomes=Coalesce(Sum("incomes"), 0),
-                total_outcomes=Coalesce(Sum("outcomes"), 0),
-                balance=Coalesce(Sum("incomes"), 0) - Coalesce(Sum("outcomes"), 0),
-            )
-            .order_by("date_service")
-        )
+        income_categories = CategoryIncome.objects.all()
+        outcome_categories = CategoryOutcome.objects.all()
+        groups = Group.objects.all()
+        hotels = Hotel.objects.all()
 
         context = {
+            "hotels": hotels,
+            "groups": groups,
+            "income_categories": income_categories,
+            "outcome_categories": outcome_categories,
             "balances": balances,
             "start_date": start_date,
             "finish_date": finish_date,
             "cash_on_hand": cash_on_hand,
         }
-        print(start_date, finish_date)
+
         return render(request, "crm/report.html", context)
 
 
@@ -259,6 +283,42 @@ class ReportDetail(View):
             "cash_on_hand": cash_on_hand
         }
         return render(request, "crm/report-detail.html", context)
+
+
+class ReportAsyncView(View):
+    @staticmethod
+    def get(request):
+        start_date, finish_date = get_date_for_report(request)
+
+        request_ = request.GET
+
+        category_income = request_.get("category_income")
+        category_outcome = request_.get("category_outcome")
+        group = request_.get("group")
+        hotel = request_.get("hotel")
+
+        query = Q()
+
+        if category_income:
+            query &= Q(category_income_id=int(category_income))
+        if category_outcome:
+            query &= Q(category_outcome_id=int(category_outcome))
+        if group:
+            query &= Q(group_id=int(group))
+        if hotel:
+            query &= Q(hotel_id=int(hotel))
+        # Получите балансы с помощью функции get_report_delta
+        if not query.children:
+            balances = list(get_report_delta(start_date, finish_date))
+
+        else:
+            balances = list(get_report_delta(start_date, finish_date, query))
+
+
+
+
+        # Верните данные в виде JSON-ответа
+        return JsonResponse(balances, safe=False)
 
 
 class BookingGroupView(View):
